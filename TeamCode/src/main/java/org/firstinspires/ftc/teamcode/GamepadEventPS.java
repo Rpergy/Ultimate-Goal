@@ -1,10 +1,25 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
+import org.jetbrains.annotations.NotNull;
+
 public class GamepadEventPS extends Toggle.OneShot {
-    Toggle.OneShot circle, square, x, triangle, dPadLeft, dPadRight, dPadUp, dPadDown, leftBumper, rightBumper = new Toggle.OneShot();
+    Toggle.OneShot circle, square, x, triangle, dPadLeft, dPadRight, dPadUp, dPadDown, leftBumper, rightBumper;
+
     Gamepad gamepad;
-    public GamepadEventPS(Gamepad gamepad) {
+
+    public GamepadEventPS(@NotNull Gamepad gamepad) {
+        circle = new Toggle.OneShot();
+        square = new Toggle.OneShot();
+        x = new Toggle.OneShot();
+        triangle = new Toggle.OneShot();
+        dPadRight = new Toggle.OneShot();
+        dPadLeft = new Toggle.OneShot();
+        dPadUp = new Toggle.OneShot();
+        dPadDown = new Toggle.OneShot();
+        leftBumper = new Toggle.OneShot();
+        rightBumper = new Toggle.OneShot();
+
         this.gamepad = gamepad;
 
     }

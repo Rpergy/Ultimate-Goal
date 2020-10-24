@@ -25,30 +25,43 @@ public class Actuation {
         opMode = linearOpMode;
         this.localizer = localizer;
 
-        intake = linearOpMode.hardwareMap.dcMotor.get("intake");
-        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (linearOpMode.hardwareMap.dcMotor.contains("intake")) {
+            intake = linearOpMode.hardwareMap.dcMotor.get("intake");
+            intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
-        shoot = linearOpMode.hardwareMap.dcMotor.get("shooter");
-        shoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shoot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (linearOpMode.hardwareMap.dcMotor.contains("shooter")) {
+            shoot = linearOpMode.hardwareMap.dcMotor.get("shooter");
+            shoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            shoot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
-        turn = linearOpMode.hardwareMap.servo.get("shootTurn");
-        turn.setPosition(RESTING_TURNING_POS);
-        turn.scaleRange(0,300);
+        if (linearOpMode.hardwareMap.servo.contains("shootTurn")) {
+            turn = linearOpMode.hardwareMap.servo.get("shootTurn");
+            turn.setPosition(RESTING_TURNING_POS);
+            turn.scaleRange(0, 300);
+        }
 
-        wobbleGrab = linearOpMode.hardwareMap.servo.get("wobbleGrab");
-        wobbleGrab.setPosition(WOBBLE_GRAB); //TODO: Find "grab" pos
+        if (linearOpMode.hardwareMap.servo.contains("wobbleGrab")) {
+            wobbleGrab = linearOpMode.hardwareMap.servo.get("wobbleGrab");
+            wobbleGrab.setPosition(WOBBLE_GRAB); //TODO: Find "grab" pos
+        }
     }
 
     void suck() {
-        intake.setPower(1);
+        if (intake != null)
+            intake.setPower(1);
     }
+
     void stopIntake() {
-        intake.setPower(0);
+        if (intake != null)
+            intake.setPower(0);
     }
+
     void spitOut() {
-        intake.setPower(-1);
+        if (intake != null)
+            intake.setPower(-1);
     }
 
     // TODO: Different shoot powers for different distances?
@@ -63,26 +76,30 @@ public class Actuation {
     }
 
     void shoot(Vector2d target) {
-        Pose2d pose = localizer.getPoseEstimate();
-        double bearing = target.angleBetween(pose.vec()) + pose.getHeading(); // should be plus or minus?
-        turn.setPosition(bearing); // TODO: Figure out how to translate radians to turn into turn pos for servo
+        if (shoot != null && turn != null) {
+            Pose2d pose = localizer.getPoseEstimate();
+            double bearing = target.angleBetween(pose.vec()) + pose.getHeading(); // should be plus or minus?
+            if (Math.abs(bearing) > 150)
+                turn.setPosition(bearing); // TODO: Figure out how to translate radians to turn into turn pos for servo
 
-        shoot.setPower(1);
-        opMode.sleep(2000);
-        shoot.setPower(0);
-
+            shoot.setPower(1);
+            opMode.sleep(2000);
+            shoot.setPower(0);
+        }
     }
 
     void grabWobble() {
-        wobbleGrab.setPosition(WOBBLE_GRAB);
+        if (wobbleGrab != null)
+            wobbleGrab.setPosition(WOBBLE_GRAB);
     }
 
     void releaseWobble() {
-        wobbleGrab.setPosition(WOBBLE_RELEASE);
+        if (wobbleGrab != null)
+            wobbleGrab.setPosition(WOBBLE_RELEASE);
     }
 
     /**
-        From -150 (all the way left) to 150 (all the way right) degrees.
+     * From -150 (all the way left) to 150 (all the way right) degrees.
      */
     void turnShooter(double angle) {
         double maxBearing = 300;

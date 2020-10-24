@@ -6,6 +6,8 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous
 public class Autonomous extends LinearOpMode {
     /*
         Routine:
@@ -19,8 +21,8 @@ public class Autonomous extends LinearOpMode {
 
     private TensorFlowRingDetection ringDetection;
     private String ringCase = "";
-    private StandardMechanumDrive drive = new StandardMechanumDrive(this.hardwareMap);
-    Actuation actuation = new Actuation(this, drive.getLocalizer());
+    private StandardMechanumDrive drive;
+    Actuation actuation;
 
     Vector2d centerA = new Vector2d(12,-60);
     Vector2d centerB = new Vector2d(36,-36);
@@ -29,6 +31,8 @@ public class Autonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        drive = new StandardMechanumDrive(hardwareMap);
+        actuation = new Actuation(this, drive.getLocalizer());
         ringDetection = new TensorFlowRingDetection(this);
         if (isStopRequested()) return;
         waitForStart();
@@ -39,9 +43,9 @@ public class Autonomous extends LinearOpMode {
     }
 
     private void powerShots() {
-        Vector2d leftPowerShotPos = new Vector2d(DriveConstants.MAX_EDGE, 4.5);
-        Vector2d centerPowerShotPos = new Vector2d(DriveConstants.MAX_EDGE, 9);
-        Vector2d rightPowerShotPos = new Vector2d(DriveConstants.MAX_EDGE, 13.5);
+        Vector2d leftPowerShotPos = new Vector2d(DriveConstants.MAX_EDGE, -4.5);
+        Vector2d centerPowerShotPos = new Vector2d(DriveConstants.MAX_EDGE, -9);
+        Vector2d rightPowerShotPos = new Vector2d(DriveConstants.MAX_EDGE, -13.5);
         Vector2d[] targets = {leftPowerShotPos, centerPowerShotPos, rightPowerShotPos};
         for (int i = 0; i < 3; i++) {
             actuation.shoot(targets[i]);
@@ -112,8 +116,6 @@ public class Autonomous extends LinearOpMode {
                 actuation.stopIntake();
                 wobbleRoutine("C");
                 break;
-            default: // CV screwed up
-                return;
         }
     }
 }

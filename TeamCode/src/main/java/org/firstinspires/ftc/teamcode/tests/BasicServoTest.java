@@ -10,23 +10,26 @@ import org.firstinspires.ftc.teamcode.ValueCycler;
 @TeleOp
 public class BasicServoTest extends OpMode {
     Servo servo;
-    GamepadEventPS update = new GamepadEventPS(gamepad1);
+    GamepadEventPS update;
     double position = 0;
-    double increment = .01;
-    ValueCycler positionIncrements = new ValueCycler(gamepad1,
+    double increment = .1;
+    /*ValueCycler positionIncrements = new ValueCycler(gamepad1,
             new double[]{.01, .05, .1, .2, .3},
-            ValueCycler.CONTROL_PAIRS.D_PAD_VERTICAL, update);
+            ValueCycler.CONTROL_PAIRS.D_PAD_VERTICAL, update);*/
     int index = 0;
 
     @Override
     public void init() {
+
         servo = hardwareMap.servo.get("servo");
+        update = new GamepadEventPS(gamepad1);
+        
     }
 
     @Override
     public void loop() {
 
-        increment = positionIncrements.update();
+//        increment = positionIncrements.update();
 
         if (update.circle())
             servo.setPosition(0);
