@@ -14,6 +14,8 @@ public class KobeTest extends OpMode {
     double power = 0;
     Servo feeder;
     double feederPosition = 0;
+    final double initial = .34;
+    final double launch = .38;
 
     @Override
     public void init() {
@@ -26,19 +28,21 @@ public class KobeTest extends OpMode {
 
     @Override
     public void loop() {
-        if(gamepad1.circle)
-            power = 1;
+        if(update.rightBumper())
+            feeder.setPosition(launch);
+
+        if(update.leftBumper())
+            feeder.setPosition(initial);
 
         if(gamepad1.square)
+            power = 1;
+
+
+        if(gamepad1.circle)
             power = 0;
 
-        if(gamepad1.x) {
-            feeder.setPosition(1);
-            feeder.setPosition(0);
-        }
-
         if(update.dPadLeft()) {
-            if(Math.abs(power) <= 1)
+            if(Math.abs(power) >= 0.01)
                 power -= .01;
         }
 
@@ -49,11 +53,15 @@ public class KobeTest extends OpMode {
 
         if(update.dPadUp())
             feederPosition += .01;
+
         if(update.dPadDown())
             feederPosition -= .01;
 
+
         shooter.setPower(power);
+        feeder.setPosition(feederPosition);
         telemetry.addData("Shooter power", power);
+        telemetry.addData("square to put in feed pos", "triangle to put in initial pos");
         telemetry.addData("feeder pos", feeder.getPosition());
         telemetry.update();
 
