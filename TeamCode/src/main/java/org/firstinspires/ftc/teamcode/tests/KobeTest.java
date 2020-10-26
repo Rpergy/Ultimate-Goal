@@ -23,7 +23,6 @@ public class KobeTest extends OpMode {
         shooter = this.hardwareMap.dcMotor.get("shooter");
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         feeder = hardwareMap.servo.get("feeder");
-
     }
 
     @Override
@@ -36,7 +35,6 @@ public class KobeTest extends OpMode {
 
         if(gamepad1.square)
             power = 1;
-
 
         if(gamepad1.circle)
             power = 0;
