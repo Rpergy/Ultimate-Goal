@@ -93,7 +93,7 @@ public class StandardMechanumDrive extends MecanumDrive {
 
     private Pose2d lastPoseOnTurn;
 
-    public StandardMechanumDrive(HardwareMap hardwareMap) {
+    public StandardMechanumDrive(final HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();
@@ -157,21 +157,7 @@ public class StandardMechanumDrive extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        // TODO: reverse any motors using DcMotor.setDirection()
-
-        // TODO: if desired, use setLocalizer() to change the localization method
-
-        //left, right perpendicular
-        setLocalizer(new ThreeTrackingWheelLocalizer(Arrays.asList(new Pose2d(0, 7.875), new Pose2d(0, -7.875), new Pose2d(0, 0, Math.toRadians(90)))) {
-            @NotNull
-            @Override
-            public List<Double> getWheelPositions() { // return positions in inches, don't think order matters.
-                return Arrays.asList(frontLeft.getCurrentPosition() / (TICKS_PER_REV) * 2 * Math.PI * DriveConstants.WHEEL_RADIUS,
-                        frontRight.getCurrentPosition() / (TICKS_PER_REV) * 2 * Math.PI * DriveConstants.WHEEL_RADIUS,
-                        backLeft.getCurrentPosition() / (TICKS_PER_REV) * 2 * Math.PI * DriveConstants.WHEEL_RADIUS);
-            }
-        });
-        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

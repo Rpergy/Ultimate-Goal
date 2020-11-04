@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.tests;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,25 +9,30 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.StandardMechanumDrive;
 
 /*
- * This is a simple routine to test translational drive capabilities.
+ * This is an example of a more complex path to really test the tuning.
  */
-@Config
 @Autonomous(group = "drive")
-public class StraightTest extends LinearOpMode {
-    public static double DISTANCE = 48; // in
-
+public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         StandardMechanumDrive drive = new StandardMechanumDrive(hardwareMap);
-
-        Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .forward(DISTANCE)
-                .build();
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-        drive.followTrajectory(trajectory);
+        Trajectory traj = drive.trajectoryBuilder(new Pose2d())
+                .splineTo(new Vector2d(30, 30), 0)
+                .build();
+
+        drive.followTrajectory(traj);
+
+        sleep(2000);
+
+        drive.followTrajectory(
+                drive.trajectoryBuilder(traj.end(), true)
+                        .splineTo(new Vector2d(0, 0), Math.toRadians(180))
+                        .build()
+        );
     }
 }
