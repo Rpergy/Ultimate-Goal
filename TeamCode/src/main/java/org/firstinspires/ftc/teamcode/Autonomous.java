@@ -34,8 +34,8 @@ public class Autonomous extends LinearOpMode {
         drive = new StandardMechanumDrive(hardwareMap);
         actuation = new Actuation(this, drive.getLocalizer());
         ringDetection = new TensorFlowRingDetection(this);
-        if (isStopRequested()) return;
         waitForStart();
+        if (isStopRequested()) return;
         ringCase = ringDetection.res(this);
         powerShots();
         getCaseTrajectory(ringCase);
