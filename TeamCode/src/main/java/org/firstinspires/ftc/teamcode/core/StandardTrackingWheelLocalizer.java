@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.core;
 
 import androidx.annotation.NonNull;
 
@@ -11,24 +11,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import java.util.Arrays;
 import java.util.List;
 
-/*
- * Sample tracking wheel localizer implementation assuming the standard configuration:
- *
- *    /--------------\
- *    |     ____     |
- *    |     ----     |
- *    | ||        || |
- *    | ||        || |
- *    |              |
- *    |              |
- *    \--------------/
- *
- */
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
+    // Remember, all applicable measurements are in inches.
     public static double TICKS_PER_REV = 4000;
-    public static double WHEEL_RADIUS = .984; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
+    public static double WHEEL_RADIUS = .984;
+    public static double GEAR_RATIO = 1;
 
     public static double LATERAL_DISTANCE = 7.875 * 2; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = -6.5; // in; offset of the lateral wheel
@@ -49,8 +37,6 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         leftEncoder.setDirection(Encoder.Direction.FORWARD);
         rightEncoder.setDirection(Encoder.Direction.FORWARD);
         frontEncoder.setDirection(Encoder.Direction.FORWARD);
-
-        // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
     }
 
     public static double encoderTicksToInches(double ticks) {
@@ -70,10 +56,6 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     @NonNull
     @Override
     public List<Double> getWheelVelocities() {
-        // TODO: If your encoder velocity can exceed 32767 counts / second (such as the REV Through Bore and other
-        //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
-        //  compensation method
-
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getRawVelocity()),
                 encoderTicksToInches(rightEncoder.getRawVelocity()),

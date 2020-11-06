@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.core;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -21,7 +21,7 @@ public class Actuation {
     LinearOpMode opMode;
     Localizer localizer;
 
-    Actuation(LinearOpMode linearOpMode, Localizer localizer) {
+    public Actuation(LinearOpMode linearOpMode, Localizer localizer) {
         opMode = linearOpMode;
         this.localizer = localizer;
 
@@ -49,12 +49,12 @@ public class Actuation {
         }
     }
 
-    void suck() {
+    public void suck() {
         if (intake != null)
             intake.setPower(1);
     }
 
-    void stopIntake() {
+    public void stopIntake() {
         if (intake != null)
             intake.setPower(0);
     }
@@ -75,7 +75,7 @@ public class Actuation {
         shoot.setPower(0);
     }
 
-    void shoot(Vector2d target) {
+    public void shoot(Vector2d target) {
         if (shoot != null && turn != null) {
             Pose2d pose = localizer.getPoseEstimate();
             double bearing = target.angleBetween(pose.vec()) + pose.getHeading(); // should be plus or minus?
@@ -88,12 +88,12 @@ public class Actuation {
         }
     }
 
-    void grabWobble() {
+    public void grabWobble() {
         if (wobbleGrab != null)
             wobbleGrab.setPosition(WOBBLE_GRAB);
     }
 
-    void releaseWobble() {
+    public void releaseWobble() {
         if (wobbleGrab != null)
             wobbleGrab.setPosition(WOBBLE_RELEASE);
     }

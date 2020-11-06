@@ -1,8 +1,6 @@
-package org.firstinspires.ftc.teamcode.tests;
+package org.firstinspires.ftc.teamcode.tests.rr;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,8 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.DriveConstants;
-import org.firstinspires.ftc.teamcode.StandardMechanumDrive;
+import org.firstinspires.ftc.teamcode.core.DriveConstants;
+import org.firstinspires.ftc.teamcode.core.StandardMechanumDrive;
 
 /*
  * This routine determines the effective track width. The procedure works by executing a point turn

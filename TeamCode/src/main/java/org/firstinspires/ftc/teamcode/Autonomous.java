@@ -6,6 +6,11 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.core.Actuation;
+import org.firstinspires.ftc.teamcode.core.DriveConstants;
+import org.firstinspires.ftc.teamcode.core.StandardMechanumDrive;
+import org.firstinspires.ftc.teamcode.core.TensorFlowRingDetection;
+
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
 public class Autonomous extends LinearOpMode {

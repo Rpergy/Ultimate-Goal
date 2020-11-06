@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.tests;
+package org.firstinspires.ftc.teamcode.tests.actuation;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.GamepadEventPS;
-import org.firstinspires.ftc.teamcode.ValueCycler;
+import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
 
 @TeleOp
 public class BasicServoTest extends OpMode {

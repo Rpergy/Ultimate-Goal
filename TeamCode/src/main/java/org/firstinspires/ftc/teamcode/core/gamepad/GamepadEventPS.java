@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.core.gamepad;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.jetbrains.annotations.NotNull;

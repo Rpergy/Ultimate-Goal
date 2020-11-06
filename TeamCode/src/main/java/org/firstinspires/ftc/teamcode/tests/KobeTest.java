@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.GamepadEventPS;
+import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
 
 @TeleOp
 public class KobeTest extends OpMode {
