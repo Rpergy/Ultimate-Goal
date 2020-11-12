@@ -43,8 +43,8 @@ import java.util.List;
 
 public class TensorFlowRingDetection {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-    static final String LABEL_FIRST_ELEMENT = "Quad";
-    static final String LABEL_SECOND_ELEMENT = "Single";
+    public static final String LABEL_FIRST_ELEMENT = "Quad";
+    public static final String LABEL_SECOND_ELEMENT = "Single";
 
     private static final String VUFORIA_KEY =
             "AUpVsRb/////AAABmfXBUZLrt08+nrSaM7v/vidtLHZ0UdsN9r8vpRV8EuuFUiiyGWgGVuci/lZTSRA39PzVEGsoM8A5BcsrpPIXk8hdkPH3N2rlibpM36nPkCm+uzLNSSDSjZGwTlXO9L03O86py1p5d1sAKCZ2x9W0djHYvK7EbbmUhRzxhlXpUeud9TetcF/+7QZTxm3eIGN6y0N16Ifd/1F0hPTglegVIegbdrSYnLo8uvRkdHr0LncFus50LcZh7iq/d9jyKKqVmdVuIAUHh5FBTUC3w4QQyWD54wABK4aNO62I013+Bts24EFk/ZQpoHlNMgXl0MyuvkS0BEZQENBf8MR4vON0UgADxZNfcwmG+eZNeTB2jX8w";

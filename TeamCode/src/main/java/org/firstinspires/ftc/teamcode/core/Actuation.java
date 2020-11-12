@@ -6,16 +6,15 @@ import com.acmerobotics.roadrunner.localization.Localizer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.configuration.MotorControllerConfiguration;
-
-import java.nio.charset.CharacterCodingException;
 
 public class Actuation {
     static Vector2d redGoal = new Vector2d(72, -44);
     private final double WOBBLE_GRAB = 0; //TODO: Find these vals
     private final double WOBBLE_RELEASE = 1;
     private final double RESTING_TURNING_POS = 0;
-    private final int TURN_OFFSET = 150;
+
+    private final double FULL_LIFT_POS = 0;
+    final double REST_LIFT_POS = 0;
     DcMotor shoot, intake, wobbleLift;
     Servo turn, wobbleGrab, wobbleTurn;
     LinearOpMode opMode;
@@ -102,6 +101,7 @@ public class Actuation {
      * From -150 (all the way left) to 150 (all the way right) degrees.
      */
     void turnShooter(double angle) {
+        final int TURN_OFFSET = 150;
         double maxBearing = 300;
         turn.setPosition(angle + TURN_OFFSET);
     }

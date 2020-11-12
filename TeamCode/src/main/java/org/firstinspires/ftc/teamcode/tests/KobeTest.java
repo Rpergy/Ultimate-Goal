@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
 
@@ -16,6 +17,7 @@ public class KobeTest extends OpMode {
     double feederPosition = 0;
     final double initial = .34;
     final double launch = .38;
+    VoltageSensor voltage;
 
     @Override
     public void init() {
@@ -23,6 +25,7 @@ public class KobeTest extends OpMode {
         shooter = this.hardwareMap.dcMotor.get("shooter");
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         feeder = hardwareMap.servo.get("feeder");
+        voltage = hardwareMap.voltageSensor.iterator().next();
     }
 
     @Override
@@ -56,11 +59,13 @@ public class KobeTest extends OpMode {
             feederPosition -= .01;
 
 
+
         shooter.setPower(power);
         feeder.setPosition(feederPosition);
         telemetry.addData("Shooter power", power);
         telemetry.addData("square to put in feed pos", "triangle to put in initial pos");
         telemetry.addData("feeder pos", feeder.getPosition());
+        telemetry.addData("voltage", voltage.getVoltage());
         telemetry.update();
 
     }
