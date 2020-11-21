@@ -37,11 +37,17 @@ public class Autonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new StandardMechanumDrive(hardwareMap);
+        drive.setPoseEstimate(startPose);
         actuation = new Actuation(this, drive.getLocalizer());
+
         ringDetection = new TensorFlowRingDetection(this);
+
         waitForStart();
+        ringCase = "Quad";//ringDetection.res(this);
+        telemetry.addData("Ring case", ringCase);
+        telemetry.update();
+
         if (isStopRequested()) return;
-        ringCase = ringDetection.res(this);
         powerShots();
         getCaseTrajectory(ringCase);
         park();
@@ -53,16 +59,16 @@ public class Autonomous extends LinearOpMode {
         Vector2d rightPowerShotPos = new Vector2d(DriveConstants.MAX_EDGE, -13.5);
         Vector2d[] targets = {leftPowerShotPos, centerPowerShotPos, rightPowerShotPos};
         for (int i = 0; i < 3; i++) {
-            actuation.shoot(targets[i]);
+            actuation.shoot(targets[i], drive);
         }
     }
 
     void park() {
         Pose2d pose = drive.getPoseEstimate();
-        drive.trajectoryBuilder(pose).lineToConstantHeading(new Vector2d(0, pose.getY()));
+        drive.followTrajectory(drive.trajectoryBuilder(pose).lineToConstantHeading(new Vector2d(12, pose.getY())).build());
     }
 
-    /*
+    /**
         1. Go to center square of desired square
         2. Release wobble
         3. Go to start using pathToStart()
@@ -71,8 +77,7 @@ public class Autonomous extends LinearOpMode {
         6. Release
      */
     void wobbleRoutine(String caseLetter) {
-        caseLetter = caseLetter.toUpperCase();
-        switch (caseLetter) {
+        switch (caseLetter.toUpperCase()) {
             case "A":
                 wobbleBaseRoutine(centerA);
                 break;
@@ -91,31 +96,30 @@ public class Autonomous extends LinearOpMode {
     void wobbleBaseRoutine(Vector2d center) {
         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate()).splineToConstantHeading(center, 0).build());
         actuation.releaseWobble();
-        drive.followTrajectory(pathToStart().build());
+        drive.followTrajectory(pathToStart());
         actuation.grabWobble();
         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate()).splineToConstantHeading(center, 0).build());
     }
 
-    TrajectoryBuilder pathToStart() {
-        return drive.trajectoryBuilder(drive.getPoseEstimate()).splineToConstantHeading(startPose.vec(), 0);
+    Trajectory pathToStart() {
+        return drive.trajectoryBuilder(drive.getPoseEstimate()).splineToConstantHeading(startPose.vec(), 0).build();
     }
 
     private void getCaseTrajectory(String ringCase) {
-
-        Vector2d ringPose = new Vector2d(-32, -36);
+        Vector2d ringPose = new Vector2d(-24, -36);
         Trajectory startToRings = drive.trajectoryBuilder(startPose).splineToConstantHeading(ringPose, 0).build();
         switch (ringCase) {
             case "none": // Zero rings, case "A"
                 wobbleRoutine("A");
                 break;
-            case TensorFlowRingDetection.LABEL_FIRST_ELEMENT: // One ring, case "B"
+            case TensorFlowRingDetection.LABEL_SECOND_ELEMENT: // One ring, case "B", "single"
                 actuation.suck();
                 drive.followTrajectory(startToRings);
                 actuation.stopIntake();
                 wobbleRoutine("B");
 
                 break;
-            case TensorFlowRingDetection.LABEL_SECOND_ELEMENT: // 4 rings, case "C"
+            case TensorFlowRingDetection.LABEL_FIRST_ELEMENT: // 4 rings, case "C", "quad"
                 actuation.suck();
                 drive.followTrajectory(startToRings);
                 actuation.stopIntake();

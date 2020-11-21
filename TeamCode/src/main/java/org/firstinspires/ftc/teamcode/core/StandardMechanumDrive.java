@@ -148,7 +148,8 @@ public class StandardMechanumDrive extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap)); // Comment out if using all 4 motors for navigation
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

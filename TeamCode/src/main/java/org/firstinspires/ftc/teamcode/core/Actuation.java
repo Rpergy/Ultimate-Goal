@@ -5,46 +5,74 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class Actuation {
     static Vector2d redGoal = new Vector2d(72, -44);
     private final double WOBBLE_GRAB = 0; //TODO: Find these vals
     private final double WOBBLE_RELEASE = 1;
+    private final double WOBBLE_ARM_UP = 1;
+    private final double WOBBLE_ARM_DOWN = 0;
     private final double RESTING_TURNING_POS = 0;
 
     private final double FULL_LIFT_POS = 0;
     final double REST_LIFT_POS = 0;
-    DcMotor shoot, intake, wobbleLift;
-    Servo turn, wobbleGrab, wobbleTurn;
-    LinearOpMode opMode;
+    DcMotor shoot, intake;
+    Servo turn, wobbleGrab, wobbleArm;
+    HardwareMap hardwareMap;
     Localizer localizer;
+    VoltageSensor voltage;
+    LinearOpMode linearOpMode;
 
+    /**
+     * For Autonomous initialization specifically.
+     * @param linearOpMode
+     * @param localizer
+     */
     public Actuation(LinearOpMode linearOpMode, Localizer localizer) {
-        opMode = linearOpMode;
+        this(linearOpMode.hardwareMap, localizer);
+        this.linearOpMode = linearOpMode;
+    }
+
+    /**
+     * For TeleOp initialization specifically.
+     * @param hardwareMap
+     * @param localizer
+     */
+    public Actuation(HardwareMap hardwareMap, Localizer localizer) {
+        this.hardwareMap = hardwareMap;
         this.localizer = localizer;
 
-        if (linearOpMode.hardwareMap.dcMotor.contains("intake")) {
-            intake = linearOpMode.hardwareMap.dcMotor.get("intake");
+        voltage = hardwareMap.voltageSensor.iterator().next();
+
+        if (hardwareMap.dcMotor.contains("intake")) {
+            intake = hardwareMap.dcMotor.get("intake");
             intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        if (linearOpMode.hardwareMap.dcMotor.contains("shooter")) {
-            shoot = linearOpMode.hardwareMap.dcMotor.get("shooter");
+        if (hardwareMap.dcMotor.contains("shooter")) {
+            shoot = hardwareMap.dcMotor.get("shooter");
             shoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             shoot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        if (linearOpMode.hardwareMap.servo.contains("shootTurn")) {
-            turn = linearOpMode.hardwareMap.servo.get("shootTurn");
+        if (hardwareMap.servo.contains("shootTurn")) {
+            turn = hardwareMap.servo.get("shootTurn");
             turn.setPosition(RESTING_TURNING_POS);
             turn.scaleRange(0, 300);
         }
 
-        if (linearOpMode.hardwareMap.servo.contains("wobbleGrab")) {
-            wobbleGrab = linearOpMode.hardwareMap.servo.get("wobbleGrab");
+        if (hardwareMap.servo.contains("wobbleGrab")) {
+            wobbleGrab = hardwareMap.servo.get("wobbleGrab");
             wobbleGrab.setPosition(WOBBLE_GRAB); //TODO: Find "grab" pos
+        }
+
+        if(hardwareMap.servo.contains("wobbleArm")) {
+            wobbleArm = hardwareMap.servo.get("wobbleArm");
+            wobbleArm.setPosition(WOBBLE_ARM_UP);
         }
     }
 
@@ -63,26 +91,27 @@ public class Actuation {
             intake.setPower(-1);
     }
 
-    // TODO: Different shoot powers for different distances?
-    void shoot() {
-        Pose2d pose = localizer.getPoseEstimate();
-        double bearing = redGoal.angleBetween(pose.vec()) + pose.getHeading(); // should be plus or minus?
-        turn.setPosition(bearing); // TODO: Figure out how to translate radians to turn into turn pos for servo
-
-        shoot.setPower(1);
-        opMode.sleep(2000);
-        shoot.setPower(0);
+    /**
+     * Turns the shooter (or robot if necessary) to face the red goal, then fires.
+     */
+    public void shoot(StandardMechanumDrive drive) {
+        shoot(redGoal, drive);
     }
 
-    public void shoot(Vector2d target) {
+    /**
+     * Turns the shooter (or robot if necessary) to face the given target, and fires using shooterPower().
+     * @param target position to fire at
+     * @param drive driving instance to turn robot if necessary (>150 degrees)
+     */
+    public void shoot(Vector2d target, StandardMechanumDrive drive) {
         if (shoot != null && turn != null) {
             Pose2d pose = localizer.getPoseEstimate();
-            double bearing = target.angleBetween(pose.vec()) + pose.getHeading(); // should be plus or minus?
+            double bearing = target.angleBetween(pose.vec()) + pose.getHeading(); // should be + or -?
             if (Math.abs(bearing) > 150)
                 turn.setPosition(bearing); // TODO: Figure out how to translate radians to turn into turn pos for servo
-
-            shoot.setPower(1);
-            opMode.sleep(2000);
+            else drive.turn(bearing);
+            shoot.setPower(shooterPower());
+            linearOpMode.sleep(2000);
             shoot.setPower(0);
         }
     }
@@ -97,6 +126,15 @@ public class Actuation {
             wobbleGrab.setPosition(WOBBLE_RELEASE);
     }
 
+    public void wobbleArmDown() {
+        if(wobbleArm != null)
+            wobbleArm.setPosition(WOBBLE_ARM_UP);
+    }
+    public void wobbleArmUp() {
+        if(wobbleArm != null)
+            wobbleArm.setPosition(WOBBLE_ARM_DOWN);
+    }
+
     /**
      * From -150 (all the way left) to 150 (all the way right) degrees.
      */
@@ -106,5 +144,18 @@ public class Actuation {
         turn.setPosition(angle + TURN_OFFSET);
     }
 
+    /**
+     * Using the current voltage and the distance to the target on the field, calculate power necessary to get in the goal
+     * @param target position on the field to calculate the distance.
+     * @return
+     */
+    double shooterPower(Vector2d target) {
+        double distance = localizer.getPoseEstimate().vec().distTo(target);
+        double batteryVoltage = this.voltage.getVoltage();
+        return 0;
+    }
 
+    double shooterPower() {
+        return shooterPower(redGoal);
+    }
 }

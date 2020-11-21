@@ -90,7 +90,7 @@ public class TensorFlowRingDetection {
 
     public String res(LinearOpMode linearOpMode) {
         if(tfod != null) {
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            List<Recognition> updatedRecognitions = tfod.getRecognitions();
             if(updatedRecognitions != null) {
                 linearOpMode.telemetry.addData("# Object Detected", updatedRecognitions.size());
                 if(updatedRecognitions.isEmpty())
@@ -104,6 +104,7 @@ public class TensorFlowRingDetection {
 
             tfod.shutdown();
         }
+        linearOpMode.telemetry.update();
         return "Issue";
     }
 }
