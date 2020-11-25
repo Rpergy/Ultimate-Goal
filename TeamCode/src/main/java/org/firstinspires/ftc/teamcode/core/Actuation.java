@@ -8,17 +8,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.*;
 
 public class Actuation {
-    static Vector2d redGoal = new Vector2d(72, -44);
-    private final double WOBBLE_GRAB = 0; //TODO: Find these vals
-    private final double WOBBLE_RELEASE = 1;
-    private final double WOBBLE_ARM_UP = 1;
-    private final double WOBBLE_ARM_DOWN = 0;
-    private final double RESTING_TURNING_POS = 0;
 
-    private final double FULL_LIFT_POS = 0;
-    final double REST_LIFT_POS = 0;
     DcMotor shoot, intake;
     Servo turn, wobbleGrab, wobbleArm;
     HardwareMap hardwareMap;
@@ -108,7 +101,8 @@ public class Actuation {
             Pose2d pose = localizer.getPoseEstimate();
             double bearing = target.angleBetween(pose.vec()) + pose.getHeading(); // should be + or -?
             if (Math.abs(bearing) > 150)
-                turn.setPosition(bearing); // TODO: Figure out how to translate radians to turn into turn pos for servo
+                turnShooter(bearing);
+//                turn.setPosition(bearing); // TODO: Figure out how to translate radians to turn into turn pos for servo
             else drive.turn(bearing);
             shoot.setPower(shooterPower());
             linearOpMode.sleep(2000);

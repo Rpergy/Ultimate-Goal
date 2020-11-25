@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.tests;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +11,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import kotlin.collections.CollectionsKt;
+import kotlin.collections.MapsKt;
 
 @TeleOp
 public class KobeTest extends OpMode {
@@ -18,18 +36,24 @@ public class KobeTest extends OpMode {
     final double initial = .34;
     final double launch = .38;
     VoltageSensor voltage;
+    double currentPower;
+    List<Double> slopes = new LinkedList<Double>();
+    Map<Double, Double> posVals = new HashMap<>();
 
     @Override
     public void init() {
         update = new GamepadEventPS(gamepad1);
         shooter = this.hardwareMap.dcMotor.get("shooter");
+        shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         feeder = hardwareMap.servo.get("feeder");
         voltage = hardwareMap.voltageSensor.iterator().next();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void loop() {
+
         if(update.rightBumper())
             feeder.setPosition(launch);
 
@@ -58,6 +82,34 @@ public class KobeTest extends OpMode {
         if(update.dPadDown())
             feederPosition -= .01;
 
+        if(shooter.getPower() != 0) {
+            Comparator comparator = new Comparator<Double>() {
+                @Override
+                public int compare(Double aDouble, Double t1) {
+                    return 0;
+                }
+            };
+
+            if(shooter.getPower() == currentPower) {
+                posVals.put(time, (double) shooter.getCurrentPosition());
+
+                if(posVals.size() >= 100) {
+                    Map<Double, Double> sorted = MapsKt.toSortedMap(posVals);
+                    double[] keys = CollectionsKt.toDoubleArray(sorted.keySet());
+                    double[] values = CollectionsKt.toDoubleArray(sorted.values());
+                    for(int i = 0; i < sorted.size() - 1; i++) {
+                        slopes.add(slope(keys[i], keys[i -1], values[i], values[i - 1]));
+                    }
+                    telemetry.addData("Standard deviation of slopes", sd(slopes));
+                    telemetry.addData("Slope average", CollectionsKt.averageOfDouble((Iterable)slopes));
+                    telemetry.update();
+                }
+            }
+            else {
+                currentPower = shooter.getPower();
+                posVals.clear();
+            }
+        }
 
 
         shooter.setPower(power);
@@ -68,5 +120,23 @@ public class KobeTest extends OpMode {
         telemetry.addData("voltage", voltage.getVoltage());
         telemetry.update();
 
+    }
+    double slope(double x2, double x1, double y2, double y1) {
+        return (y2 - y1) / (x2 - x1);
+    }
+    double sd(List<Double> numArray) {
+        double sum = 0.0;
+        double standardDeviation = 0.0;
+
+        for (double num : numArray) {
+            sum += num;
+        }
+
+        double mean = sum / 10;
+
+        for (double num : numArray) {
+            standardDeviation += Math.pow(num - mean, 2.0);
+        }
+        return Math.sqrt(standardDeviation / 10);
     }
 }

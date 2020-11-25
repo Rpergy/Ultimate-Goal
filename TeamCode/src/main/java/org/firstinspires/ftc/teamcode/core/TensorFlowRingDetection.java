@@ -94,7 +94,7 @@ public class TensorFlowRingDetection {
             if(updatedRecognitions != null) {
                 linearOpMode.telemetry.addData("# Object Detected", updatedRecognitions.size());
                 if(updatedRecognitions.isEmpty())
-                    return "none";
+                    return "None";
                 return updatedRecognitions.get(0).getLabel();
             }
             else {

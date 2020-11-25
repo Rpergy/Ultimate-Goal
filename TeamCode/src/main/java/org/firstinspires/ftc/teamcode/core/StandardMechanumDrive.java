@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -194,6 +195,13 @@ public class StandardMechanumDrive extends MecanumDrive {
     public void followTrajectory(Trajectory trajectory) {
         followTrajectoryAsync(trajectory);
         waitForIdle();
+    }
+
+    public TrajectoryBuilder staticSpline(Vector2d end, double endHeading) {
+        return trajectoryBuilder(getPoseEstimate()).splineToConstantHeading(end, endHeading);
+    }
+    public TrajectoryBuilder staticSpline(Vector2d end) {
+        return trajectoryBuilder(getPoseEstimate()).splineToConstantHeading(end, 0);
     }
 
     public Pose2d getLastError() {
