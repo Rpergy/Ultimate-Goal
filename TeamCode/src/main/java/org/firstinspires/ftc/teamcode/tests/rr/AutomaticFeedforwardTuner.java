@@ -5,18 +5,16 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.core.StandardMechanumDrive;
 import org.firstinspires.ftc.teamcode.util.LoggingUtil;
 import org.firstinspires.ftc.teamcode.util.RegressionUtil;
-import org.firstinspires.ftc.teamcode.core.StandardMechanumDrive;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.core.DriveConstants.MAX_RPM;
-import static org.firstinspires.ftc.teamcode.core.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.core.DriveConstants.rpmToVelocity;
 
 /*
@@ -37,10 +35,6 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        if (RUN_USING_ENCODER) {
-            RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
-                    "when using the built-in drive motor velocity PID.");
-        }
 
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
