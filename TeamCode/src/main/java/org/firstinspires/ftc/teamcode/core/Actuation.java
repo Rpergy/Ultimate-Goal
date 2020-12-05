@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.core;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,18 +15,18 @@ import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
-import static java.lang.Math.toRadians;
-import static org.firstinspires.ftc.teamcode.core.ActuationConstants.*;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.FLYWHEEL_RADIUS;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.LAUNCHER_ANGLE;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.POWER_SHOT_FIRE_VERTICAL_DISPLACEMENT;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.RESTING_TURNING_POS;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.TOWER_GOAL_VERTICAL_DISPLACEMENT;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.WOBBLE_ARM_DOWN;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.WOBBLE_ARM_UP;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.WOBBLE_GRAB;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.WOBBLE_RELEASE;
-import static org.firstinspires.ftc.teamcode.core.ActuationConstants.centerPowerShot;
-import static org.firstinspires.ftc.teamcode.core.ActuationConstants.leftPowerShot;
-import static org.firstinspires.ftc.teamcode.core.ActuationConstants.redGoal;
-import static org.firstinspires.ftc.teamcode.core.ActuationConstants.rightPowerShot;
+import static org.firstinspires.ftc.teamcode.core.FieldConstants.*;
+import static org.firstinspires.ftc.teamcode.core.FieldConstants.redGoal;
 
 public class Actuation {
 

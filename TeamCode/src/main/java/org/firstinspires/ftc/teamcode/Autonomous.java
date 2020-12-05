@@ -6,17 +6,21 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.Actuation;
-import org.firstinspires.ftc.teamcode.core.ActuationConstants;
-import org.firstinspires.ftc.teamcode.core.DriveConstants;
 import org.firstinspires.ftc.teamcode.core.StandardMechanumDrive;
 import org.firstinspires.ftc.teamcode.core.TensorFlowRingDetection;
 
 import static java.lang.Math.toRadians;
-import static org.firstinspires.ftc.teamcode.core.ActuationConstants.*;
-import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.*;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_LEFT;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_MIDDLE;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_RIGHT;
+import static org.firstinspires.ftc.teamcode.core.FieldConstants.centerA;
+import static org.firstinspires.ftc.teamcode.core.FieldConstants.centerB;
+import static org.firstinspires.ftc.teamcode.core.FieldConstants.centerC;
+import static org.firstinspires.ftc.teamcode.core.FieldConstants.startPose;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
 public class Autonomous extends LinearOpMode {
+
     /*
         Routine:
         1. Perform CV Operations. Will tell us which case we need to pursue for the rest of autonomous.
@@ -32,11 +36,7 @@ public class Autonomous extends LinearOpMode {
     private StandardMechanumDrive drive;
     Actuation actuation;
 
-    Vector2d centerA = new Vector2d(12,-60);
-    Vector2d centerB = new Vector2d(36,-36);
-    Vector2d centerC = new Vector2d(60, -60);
-    Pose2d startPose = new Pose2d(-63, -36);
-
+    @SuppressWarnings("RedundantThrows")
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new StandardMechanumDrive(hardwareMap);
