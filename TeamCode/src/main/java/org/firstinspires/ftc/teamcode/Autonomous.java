@@ -6,11 +6,14 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.Actuation;
+import org.firstinspires.ftc.teamcode.core.ActuationConstants;
 import org.firstinspires.ftc.teamcode.core.DriveConstants;
 import org.firstinspires.ftc.teamcode.core.StandardMechanumDrive;
 import org.firstinspires.ftc.teamcode.core.TensorFlowRingDetection;
 
 import static java.lang.Math.toRadians;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.*;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
 public class Autonomous extends LinearOpMode {
@@ -43,7 +46,7 @@ public class Autonomous extends LinearOpMode {
 //        ringDetection = new TensorFlowRingDetection(this);
 
         waitForStart();
-        ringCase = "Quad"; //ringDetection.res(this); Hardcoding for now.
+        ringCase = "Quad"; //ringDetection.res(this); //TODO: Hardcoding for now. Change when camera is mounted
         telemetry.addData("Ring case", ringCase);
         telemetry.update();
 
@@ -54,13 +57,9 @@ public class Autonomous extends LinearOpMode {
     }
 
     private void powerShots() {
-        Vector2d leftPowerShotPos = new Vector2d(DriveConstants.MAX_EDGE, -4.5);
-        Vector2d centerPowerShotPos = new Vector2d(DriveConstants.MAX_EDGE, -9);
-        Vector2d rightPowerShotPos = new Vector2d(DriveConstants.MAX_EDGE, -13.5);
-        Vector2d[] targets = {leftPowerShotPos, centerPowerShotPos, rightPowerShotPos};
-        for (int i = 0; i < 3; i++) {
-            actuation.shoot(targets[i], drive);
-        }
+        actuation.shoot(POWER_SHOT_LEFT, drive);
+        actuation.shoot(POWER_SHOT_MIDDLE, drive);
+        actuation.shoot(POWER_SHOT_RIGHT, drive);
     }
 
     void park() {
