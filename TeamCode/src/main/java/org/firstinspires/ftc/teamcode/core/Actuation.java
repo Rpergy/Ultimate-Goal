@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.core;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,12 +17,18 @@ import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.FEEDER_END;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.FEEDER_RESTING;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.FLYWHEEL_RADIUS;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.LAUNCHER_ANGLE;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.POWER_SHOT_FIRE_VERTICAL_DISPLACEMENT;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.RESTING_TURNING_POS;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.TOWER_GOAL_VERTICAL_DISPLACEMENT;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_LEFT;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_MIDDLE;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_RIGHT;
+import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.TOWER_GOAL;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.WOBBLE_ARM_DOWN;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.WOBBLE_ARM_UP;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.WOBBLE_GRAB;
@@ -32,11 +40,12 @@ public class Actuation {
 
     DcMotorEx shoot;
     DcMotor intake;
-    Servo turn, wobbleGrab, wobbleArm;
+    Servo turn, wobbleGrab, wobbleArm, feeder;
     HardwareMap hardwareMap;
     Localizer localizer;
     VoltageSensor voltage;
     LinearOpMode linearOpMode;
+    RevColorSensorV3 colorsensor;
 
     /**
      * For Autonomous initialization specifically.
@@ -83,16 +92,35 @@ public class Actuation {
             wobbleArm = hardwareMap.servo.get("wobbleArm");
             wobbleArm.setPosition(WOBBLE_ARM_UP);
         }
+
+        if (hardwareMap.colorSensor.contains("colorSensor")) {
+            colorsensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
+        }
+
+        if (hardwareMap.servo.contains("feeder")) {
+            feeder = hardwareMap.servo.get("feeder");
+            feeder.setPosition(FEEDER_RESTING);
+        }
     }
 
 
     // All Shooter Operations
 
+    public void feedRing() {
+        feeder.setPosition(FEEDER_END);
+        feeder.setPosition(FEEDER_RESTING);
+    }
+
+    public boolean hasRings() {
+        if (colorsensor == null) return false;
+        return Math.abs(colorsensor.getNormalizedColors().red - 170) > 20;
+    }
+
     /**
      * Turns the shooter (or robot if necessary) to face the red goal, then fires.
      */
     public void shoot(StandardMechanumDrive drive) {
-        shoot(Target.TOWER_GOAL, drive);
+        shoot(TOWER_GOAL, drive);
     }
 
     /**
@@ -103,16 +131,43 @@ public class Actuation {
      * @param drive  driving instance to turn robot if necessary (>150 degrees)
      */
     public void shoot(Target target, StandardMechanumDrive drive) {
-        if (shoot != null && turn != null) {
-            Pose2d pose = localizer.getPoseEstimate();
-            double bearing = target.pos().angleBetween(pose.vec()) + pose.getHeading(); // should be + or -?
-            if (Math.abs(bearing) > 150)
-                turnShooter(bearing);
-            else drive.turn(bearing);
-            shoot.setVelocity(calcInitialSpeed(target), AngleUnit.RADIANS);
-            linearOpMode.sleep(2000); //TODO: Find appropriate delay, enough to let the motor shoot.
-            shoot.setPower(0);
+        if (shoot == null || turn == null) return;
+        Pose2d pose = localizer.getPoseEstimate();
+        double bearing = target.pos().angleBetween(pose.vec()) + pose.getHeading(); // should be + or -?
+
+        if (linearOpMode == null) { // If we are in TeleOp
+            if (pose.getX() > SHOOT_LINE - 9) {
+                drive.followTrajectory(
+                        drive.trajectoryBuilder(pose)
+                                .lineToLinearHeading(new Pose2d(SHOOT_LINE - 9, pose.getY(), bearing))
+                                .build()
+                );
+            }
+        } else {
+            drive.turn(bearing);
         }
+        feedRing();
+        shoot.setVelocity(calcInitialSpeed(target), AngleUnit.RADIANS);
+        if (linearOpMode != null)
+            linearOpMode.sleep(2000); //TODO: Find appropriate delay, enough to let the motor shoot.
+        shoot.setPower(0);
+
+    }
+
+    public void powerShots(StandardMechanumDrive drive) {
+        shoot(POWER_SHOT_LEFT, drive);
+        shoot(POWER_SHOT_MIDDLE, drive);
+        shoot(POWER_SHOT_RIGHT, drive);
+    }
+
+    public void preheatShooter() {
+        if (shoot != null)
+            shoot.setVelocity(calcInitialSpeed(TOWER_GOAL), AngleUnit.RADIANS);
+    }
+
+    public void killFlywheel() {
+        if (shoot != null)
+            shoot.setPower(0);
     }
 
     /**
@@ -186,7 +241,7 @@ public class Actuation {
             intake.setPower(0);
     }
 
-    void spitOut() {
+    public void spitOut() {
         if (intake != null)
             intake.setPower(-1);
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.content.Context;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.core.Actuation;
@@ -21,15 +22,22 @@ import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
 public class TeleOp extends OpMode {
     StandardMechanumDrive drive;
     Actuation actuation;
-    GamepadEventPS event1;
-    GamepadEventPS event2;
+    GamepadEventPS update1;
+    GamepadEventPS update2;
 
     @Override
     public void init() {
         drive = new StandardMechanumDrive(this.hardwareMap);
+        Pose2d startPose;
+        String serialized = hardwareMap.appContext.getSharedPreferences("Auton end pose", Context.MODE_PRIVATE)
+                .getString("serialized", "");
+        if(serialized.equals(""))
+            startPose = new Pose2d(0,0,0);
+        else startPose = unserialize(serialized);
+        drive.setPoseEstimate(startPose);
         actuation = new Actuation(hardwareMap, drive.getLocalizer());
-        event1 = new GamepadEventPS(gamepad1);
-        event2 = new GamepadEventPS(gamepad2);
+        update1 = new GamepadEventPS(gamepad1);
+        update2 = new GamepadEventPS(gamepad2);
     }
 
     @Override
@@ -43,13 +51,35 @@ public class TeleOp extends OpMode {
                 )
         );
 
+        if(gamepad2.right_trigger > .5) actuation.suck();
+        if(gamepad2.left_trigger > .5) actuation.spitOut();
+        if(gamepad2.right_trigger < .5 && gamepad2.left_trigger < .5) actuation.stopIntake();
 
         if(gamepad2.triangle) actuation.grabWobble();
         else actuation.releaseWobble();
 
-        if(gamepad2.right_trigger > .5) actuation.suck();
-        else actuation.stopIntake();
+        if(gamepad2.dpad_up) actuation.wobbleArmUp();
+        else actuation.wobbleArmDown();
 
+        if(actuation.hasRings()) {
+            actuation.preheatShooter();
+            telemetry.addLine("Rings present");
+        }
+        else actuation.killFlywheel();
+
+        if(update1.circle())
+            actuation.shoot(drive);
+        if (update1.triangle())
+            actuation.powerShots(drive);
+
+        telemetry.update();
         drive.update();
+    }
+    static Pose2d unserialize(String s) {
+        String[] stringValues = s.substring(1, s.length() - 1).split(",");
+        double x = Double.parseDouble(stringValues[0]);
+        double y = Double.parseDouble(stringValues[1]);
+        double heading = Double.parseDouble(stringValues[2]);
+        return new Pose2d(x, y, heading);
     }
 }

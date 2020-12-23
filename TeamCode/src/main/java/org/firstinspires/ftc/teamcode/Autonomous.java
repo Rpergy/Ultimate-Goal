@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.Actuation;
+import org.firstinspires.ftc.teamcode.core.FieldConstants;
 import org.firstinspires.ftc.teamcode.core.StandardMechanumDrive;
 import org.firstinspires.ftc.teamcode.core.TensorFlowRingDetection;
 
@@ -13,6 +17,7 @@ import static java.lang.Math.toRadians;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_LEFT;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_MIDDLE;
 import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_RIGHT;
+import static org.firstinspires.ftc.teamcode.core.FieldConstants.*;
 import static org.firstinspires.ftc.teamcode.core.FieldConstants.centerA;
 import static org.firstinspires.ftc.teamcode.core.FieldConstants.centerB;
 import static org.firstinspires.ftc.teamcode.core.FieldConstants.centerC;
@@ -51,20 +56,19 @@ public class Autonomous extends LinearOpMode {
         telemetry.update();
 
         if (isStopRequested()) return;
-        powerShots();
+        drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate()).forward(6).build());
+        actuation.powerShots(drive);
         getCaseTrajectory(ringCase);
         park();
-    }
-
-    private void powerShots() {
-        actuation.shoot(POWER_SHOT_LEFT, drive);
-        actuation.shoot(POWER_SHOT_MIDDLE, drive);
-        actuation.shoot(POWER_SHOT_RIGHT, drive);
+        hardwareMap.appContext
+                .getSharedPreferences("Auton end pose", Context.MODE_PRIVATE).edit()
+                .putString("serialized", drive.getPoseEstimate().toString())
+                .apply();
     }
 
     void park() {
         Pose2d pose = drive.getPoseEstimate();
-        drive.followTrajectory(drive.trajectoryBuilder(pose).lineToConstantHeading(new Vector2d(12, pose.getY())).build());
+        drive.followTrajectory(drive.trajectoryBuilder(pose).lineToConstantHeading(new Vector2d(SHOOT_LINE, pose.getY())).build());
     }
 
     /**

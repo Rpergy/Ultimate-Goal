@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 public class FieldConstants {
     public static final double MAX_EDGE = 72;
+    public static final double SHOOT_LINE = 12;
     public static final Vector2d redGoal = new Vector2d(72, -44);
     public static final Vector2d leftPowerShot = new Vector2d(MAX_EDGE, -4.5);
     public static final Vector2d centerPowerShot = new Vector2d(MAX_EDGE, -9);
