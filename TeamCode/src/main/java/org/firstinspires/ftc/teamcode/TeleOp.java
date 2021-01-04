@@ -9,16 +9,17 @@ import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
 
 /*
     Controls:
-    gamepad1:
+    Gamepad1:
     Movement
     Shooting
 
-    gAMEPAD2:
+    Gamepad2:
     intake right trigger
     wobblegoal arm move: dpadUp
     wobblegoal grab: triangle
 
  */
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends OpMode {
     StandardMechanumDrive drive;
     Actuation actuation;
