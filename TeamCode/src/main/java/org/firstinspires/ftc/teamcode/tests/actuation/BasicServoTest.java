@@ -40,7 +40,7 @@ public class BasicServoTest extends OpMode {
         if (update.dPadRight())
             position += increment;
 
-//        servo.setPosition(position);
+//        servo.setPosition(position); not needed
         telemetry.addData("Increment level", increment);
 //        telemetry.addData("Press a and b to move to either ends", "");
         telemetry.addData("Current position", servo.getPosition());
