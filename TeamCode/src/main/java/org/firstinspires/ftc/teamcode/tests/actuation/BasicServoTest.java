@@ -12,10 +12,10 @@ public class BasicServoTest extends OpMode {
     Servo servo2;
     GamepadEventPS update;
     double position = 0;
-    double increment = .1;
+    double increment = .05;
 
     double position2 = 0;
-    double increment2 = .1;
+    double increment2 = .05;
     /*ValueCycler positionIncrements = new ValueCycler(gamepad1,
             new double[]{.01, .05, .1, .2, .3},
             ValueCycler.CONTROL_PAIRS.D_PAD_VERTICAL, update);*/
@@ -46,9 +46,9 @@ public class BasicServoTest extends OpMode {
             position += increment;
 
         if(update.dPadDown())
-            position -= increment;
+            position2 -= increment;
         if(update.dPadUp())
-            position += increment;
+            position2 += increment;
 
         servo.setPosition(position);
         servo2.setPosition(position2);
