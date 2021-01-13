@@ -13,6 +13,9 @@ public class BasicServoTest extends OpMode {
     GamepadEventPS update;
     double position = 0;
     double increment = .1;
+
+    double position2 = 0;
+    double increment2 = .1;
     /*ValueCycler positionIncrements = new ValueCycler(gamepad1,
             new double[]{.01, .05, .1, .2, .3},
             ValueCycler.CONTROL_PAIRS.D_PAD_VERTICAL, update);*/
@@ -42,7 +45,13 @@ public class BasicServoTest extends OpMode {
         if (update.dPadRight())
             position += increment;
 
-//        servo.setPosition(position); not needed
+        if(update.dPadDown())
+            position -= increment;
+        if(update.dPadUp())
+            position += increment;
+
+        servo.setPosition(position);
+        servo2.setPosition(position2);
         telemetry.addData("Increment level", increment);
 //        telemetry.addData("Press a and b to move to either ends", "");
         telemetry.addData("Current position wobble arm", servo.getPosition());
