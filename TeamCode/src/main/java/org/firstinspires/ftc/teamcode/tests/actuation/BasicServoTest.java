@@ -26,8 +26,8 @@ public class BasicServoTest extends OpMode {
     @Override
     public void init() {
 
-        servo = hardwareMap.servo.get("wobbleArm");
-        servo2 = hardwareMap.crservo.get("wobbleGrab");
+        servo = hardwareMap.servo.get("wobbleGrab");
+        servo2 = hardwareMap.crservo.get("wobbleArm");
         update = new GamepadEventPS(gamepad1);
         
     }
