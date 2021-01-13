@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
 @TeleOp
 public class BasicServoTest extends OpMode {
     Servo servo;
+    Servo servo2;
     GamepadEventPS update;
     double position = 0;
     double increment = .1;
@@ -20,7 +21,8 @@ public class BasicServoTest extends OpMode {
     @Override
     public void init() {
 
-        servo = hardwareMap.servo.get("servo");
+        servo = hardwareMap.servo.get("wobbleArm");
+        servo2 = hardwareMap.servo.get("wobbleGrab");
         update = new GamepadEventPS(gamepad1);
         
     }
@@ -43,6 +45,7 @@ public class BasicServoTest extends OpMode {
 //        servo.setPosition(position); not needed
         telemetry.addData("Increment level", increment);
 //        telemetry.addData("Press a and b to move to either ends", "");
-        telemetry.addData("Current position", servo.getPosition());
+        telemetry.addData("Current position wobble arm", servo.getPosition());
+        telemetry.addData("Current position wobble grab", servo2.getPosition());
     }
 }
