@@ -14,7 +14,8 @@ public class ContinuousServoTest extends OpMode {
 
     @Override
     public void init() {
-        servo = hardwareMap.crservo.get("servo");
+        servo = hardwareMap.crservo.get("wobbleArm");
+//        servo.getController().setServoPosition(0,1);
         update = new GamepadEventPS(this.gamepad1);
 
     }

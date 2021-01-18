@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -9,14 +8,10 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.Actuation;
-import org.firstinspires.ftc.teamcode.core.FieldConstants;
 import org.firstinspires.ftc.teamcode.core.StandardMechanumDrive;
 import org.firstinspires.ftc.teamcode.core.TensorFlowRingDetection;
 
 import static java.lang.Math.toRadians;
-import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_LEFT;
-import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_MIDDLE;
-import static org.firstinspires.ftc.teamcode.core.ActuationConstants.Target.POWER_SHOT_RIGHT;
 import static org.firstinspires.ftc.teamcode.core.FieldConstants.*;
 import static org.firstinspires.ftc.teamcode.core.FieldConstants.centerA;
 import static org.firstinspires.ftc.teamcode.core.FieldConstants.centerB;
@@ -83,7 +78,8 @@ public class Autonomous extends LinearOpMode {
         Pose2d centerPose = new Pose2d(center.getX(), center.getY(), 0);
         Pose2d backPose = new Pose2d(-55,-48, toRadians(-90));
         drive.followTrajectory(drive.staticSpline(center).build());
-        actuation.releaseWobble();
+        actuation.placeWobble();
+        actuation.wobbleArmUp();
         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate(), toRadians(90))
                 .splineToSplineHeading(backPose, toRadians(45))
                 .build());

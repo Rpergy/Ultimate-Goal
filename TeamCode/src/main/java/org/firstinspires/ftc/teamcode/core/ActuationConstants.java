@@ -11,8 +11,9 @@ public class ActuationConstants {
     static final double WOBBLE_GRAB = 0.375;
     static final double WOBBLE_RELEASE = 0.8;
 
-    static final double WOBBLE_ARM_UP = 0; //TODO: Look at later, can't turn all the way.
-    static final double WOBBLE_ARM_DOWN = 0.46;
+    static final double WOBBLE_ARM_UP = 0.0;
+    static final double WOBBLE_ARM_DOWN = 0.955;
+
     static final double RESTING_TURNING_POS = 0;
 
     // Launcher Constants

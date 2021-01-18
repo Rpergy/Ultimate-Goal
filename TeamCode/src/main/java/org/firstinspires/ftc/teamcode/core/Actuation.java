@@ -77,11 +77,11 @@ public class Actuation {
             shoot.setVelocityPIDFCoefficients(1, 1, 0, 1);
         }
 
-        if (hardwareMap.servo.contains("shootTurn")) {
+        /*if (hardwareMap.servo.contains("shootTurn")) {
             turn = hardwareMap.servo.get("shootTurn");
             turn.setPosition(RESTING_TURNING_POS);
             turn.scaleRange(0, 300);
-        }
+        }*/
 
         if (hardwareMap.servo.contains("wobbleGrab")) {
             wobbleGrab = hardwareMap.servo.get("wobbleGrab");
@@ -131,7 +131,7 @@ public class Actuation {
      * @param drive  driving instance to turn robot if necessary (>150 degrees)
      */
     public void shoot(Target target, StandardMechanumDrive drive) {
-        if (shoot == null || turn == null) return;
+        if (shoot == null) return;
         Pose2d pose = localizer.getPoseEstimate();
         double bearing = target.pos().angleBetween(pose.vec()) + pose.getHeading(); // should be + or -?
 
@@ -249,12 +249,12 @@ public class Actuation {
 
     // All Wobble Operations
 
-    public void grabWobble() {
+    public void wobbleClawClose() {
         if (wobbleGrab != null)
             wobbleGrab.setPosition(WOBBLE_GRAB);
     }
 
-    public void releaseWobble() {
+    public void wobbleClawOpen() {
         if (wobbleGrab != null)
             wobbleGrab.setPosition(WOBBLE_RELEASE);
     }
@@ -267,6 +267,20 @@ public class Actuation {
     public void wobbleArmUp() {
         if (wobbleArm != null)
             wobbleArm.setPosition(WOBBLE_ARM_DOWN);
+    }
+
+    public void placeWobble() {
+        if(wobbleArm != null  && wobbleGrab != null) {
+            wobbleArmDown();
+            wobbleClawOpen();
+        }
+    }
+
+    public void grabWobble() {
+        if(wobbleArm != null  && wobbleGrab != null) {
+            wobbleClawClose();
+            wobbleArmUp();
+        }
     }
 
 }

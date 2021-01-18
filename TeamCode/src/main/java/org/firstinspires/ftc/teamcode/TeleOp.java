@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.content.Context;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.core.Actuation;
 import org.firstinspires.ftc.teamcode.core.StandardMechanumDrive;
 import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
+import org.firstinspires.ftc.teamcode.core.gamepad.Toggle;
 
 /*
     Controls:
@@ -25,13 +25,14 @@ public class TeleOp extends OpMode {
     Actuation actuation;
     GamepadEventPS update1;
     GamepadEventPS update2;
+    Toggle.OneShot wobbleArmUpdate = new Toggle.OneShot();
 
     @Override
     public void init() {
         drive = new StandardMechanumDrive(this.hardwareMap);
         Pose2d startPose;
-        String serialized = hardwareMap.appContext.getSharedPreferences("Auton end pose", Context.MODE_PRIVATE)
-                .getString("serialized", "");
+        String serialized = ""; /*hardwareMap.appContext.getSharedPreferences("Auton end pose", Context.MODE_PRIVATE)
+                .getString("serialized", "");*/
         if(serialized.equals(""))
             startPose = new Pose2d(0,0,0);
         else startPose = unserialize(serialized);
@@ -56,11 +57,13 @@ public class TeleOp extends OpMode {
         if(gamepad2.left_trigger > .5) actuation.spitOut();
         if(gamepad2.right_trigger < .5 && gamepad2.left_trigger < .5) actuation.stopIntake();
 
-        if(gamepad2.triangle) actuation.grabWobble();
-        else actuation.releaseWobble();
+        if(gamepad1.triangle) actuation.wobbleClawClose();
+        else actuation.wobbleClawOpen();
 
-        if(gamepad2.dpad_up) actuation.wobbleArmUp();
+        if(gamepad1.square) actuation.wobbleArmUp();
         else actuation.wobbleArmDown();
+
+//        if(wobbleArmUpdate.update(gamepad1.triangle))
 
         if(actuation.hasRings()) {
             actuation.preheatShooter();
@@ -68,10 +71,10 @@ public class TeleOp extends OpMode {
         }
         else actuation.killFlywheel();
 
-        if(update1.circle())
+       /* if(update1.circle())
             actuation.shoot(drive);
         if (update1.triangle())
-            actuation.powerShots(drive);
+            actuation.powerShots(drive);*/
 
         telemetry.update();
         drive.update();

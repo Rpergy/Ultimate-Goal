@@ -16,6 +16,5 @@ public class SingularMotorTest extends LinearOpMode {
         while(opModeIsActive()) {
             motor.setPower(1);
         }
-
     }
 }
