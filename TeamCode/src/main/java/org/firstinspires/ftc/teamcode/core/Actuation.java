@@ -273,6 +273,7 @@ public class Actuation {
         if(wobbleArm != null  && wobbleGrab != null) {
             wobbleArmDown();
             wobbleClawOpen();
+            wobbleArmUp();
         }
     }
 
@@ -283,4 +284,11 @@ public class Actuation {
         }
     }
 
+    public boolean isWobbleArmUp() {
+        return wobbleArm.getPosition() == WOBBLE_ARM_UP;
+    }
+
+    public boolean isWobbleClawOpen() {
+        return wobbleGrab.getPosition() == WOBBLE_RELEASE;
+    }
 }

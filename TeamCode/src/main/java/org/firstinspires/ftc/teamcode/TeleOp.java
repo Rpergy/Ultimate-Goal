@@ -25,7 +25,6 @@ public class TeleOp extends OpMode {
     Actuation actuation;
     GamepadEventPS update1;
     GamepadEventPS update2;
-    Toggle.OneShot wobbleArmUpdate = new Toggle.OneShot();
 
     @Override
     public void init() {
@@ -57,13 +56,22 @@ public class TeleOp extends OpMode {
         if(gamepad2.left_trigger > .5) actuation.spitOut();
         if(gamepad2.right_trigger < .5 && gamepad2.left_trigger < .5) actuation.stopIntake();
 
-        if(gamepad1.triangle) actuation.wobbleClawClose();
+        /*if(gamepad1.triangle) actuation.wobbleClawClose();
         else actuation.wobbleClawOpen();
 
         if(gamepad1.square) actuation.wobbleArmUp();
-        else actuation.wobbleArmDown();
+        else actuation.wobbleArmDown();*/
 
-//        if(wobbleArmUpdate.update(gamepad1.triangle))
+        if(update1.triangle()) {
+            if(actuation.isWobbleArmUp())
+                actuation.wobbleArmDown();
+            else actuation.wobbleArmUp();
+        }
+        if(update1.square()) {
+            if(actuation.isWobbleClawOpen())
+                actuation.wobbleClawClose();
+            else actuation.wobbleClawOpen();
+        }
 
         if(actuation.hasRings()) {
             actuation.preheatShooter();

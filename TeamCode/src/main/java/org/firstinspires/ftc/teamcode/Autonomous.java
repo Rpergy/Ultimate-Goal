@@ -53,7 +53,7 @@ public class Autonomous extends LinearOpMode {
         if (isStopRequested()) return;
         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate()).forward(6).build());
         actuation.powerShots(drive);
-        getCaseTrajectory(ringCase);
+        performCase(ringCase);
         park();
         hardwareMap.appContext
                 .getSharedPreferences("Auton end pose", Context.MODE_PRIVATE).edit()
@@ -68,29 +68,37 @@ public class Autonomous extends LinearOpMode {
 
     /**
         1. Go to center square of desired square
-        2. Release wobble
-        3. Go to start using pathToStart()
+        2. Release 1st wobble (already preloaded)
+        3. Go to start area
         4. Grab other wobble
         5. Go back to same case square
-        6. Release
+        6. Drop off 2nd wobble
      */
     void wobbleRoutine(Vector2d center) {
+        // centerPose is a pose of the square's center (A/B/C), backPose is the position the robot will be in to collect the second wobble goal
         Pose2d centerPose = new Pose2d(center.getX(), center.getY(), 0);
         Pose2d backPose = new Pose2d(-55,-48, toRadians(-90));
+
+        // Go to square for 1st time, drop off preloaded wobble
         drive.followTrajectory(drive.staticSpline(center).build());
         actuation.placeWobble();
-        actuation.wobbleArmUp();
-        drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate(), toRadians(90))
-                .splineToSplineHeading(backPose, toRadians(45))
-                .build());
-//        drive.trajectoryBuilder()
-//        drive.followTrajectory(drive.staticSpline(new Vector2d(-55, -48), -90).build());
+
+        // Go back to start area to get 2nd wobble, go back to same square
+        drive.followTrajectory(
+                drive.trajectoryBuilder(drive.getPoseEstimate(), toRadians(90))
+                .splineToSplineHeading(backPose, toRadians(180))
+                .build()
+        );
+
+        // Collect 2nd wobble (right side), go back to drop off second wobble and place it
         actuation.grabWobble();
-        drive.followTrajectory(drive.trajectoryBuilder(backPose, toRadians(0))
+        drive.followTrajectory(
+                drive.trajectoryBuilder(backPose, toRadians(0))
                 .splineToSplineHeading(centerPose, toRadians(0)).build());
+        actuation.placeWobble();
     }
 
-    private void getCaseTrajectory(String ringCase) {
+    private void performCase(String ringCase) {
         Vector2d ringPos = new Vector2d(-24, -36);
         Trajectory startToRings = drive.trajectoryBuilder(startPose).splineToConstantHeading(ringPos, 0).build();
         switch (ringCase) {
@@ -102,6 +110,7 @@ public class Autonomous extends LinearOpMode {
                 actuation.suck();
                 drive.followTrajectory(startToRings);
                 actuation.stopIntake();
+                actuation.shoot(drive); //TODO: Account for loading rings into shooter for case B, C
                 wobbleRoutine(centerB);
                 break;
 
@@ -109,6 +118,11 @@ public class Autonomous extends LinearOpMode {
                 actuation.suck();
                 drive.followTrajectory(startToRings);
                 actuation.stopIntake();
+
+                actuation.shoot(drive);
+                actuation.shoot(drive);
+                actuation.shoot(drive);
+
                 wobbleRoutine(centerC);
                 break;
         }
