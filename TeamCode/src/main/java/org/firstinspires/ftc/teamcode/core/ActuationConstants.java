@@ -12,7 +12,7 @@ public class ActuationConstants {
     static final double WOBBLE_RELEASE = 0.8;
 
     static final double WOBBLE_ARM_UP = 0.0;
-    static final double WOBBLE_ARM_DOWN = 0.955;
+    static final double WOBBLE_ARM_DOWN = 0.85;
 
     static final double RESTING_TURNING_POS = 0;
 

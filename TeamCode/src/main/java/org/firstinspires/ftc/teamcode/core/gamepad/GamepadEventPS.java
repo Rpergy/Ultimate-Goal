@@ -25,8 +25,8 @@ public class GamepadEventPS extends Toggle.OneShot {
     }
 
     public boolean x() { return x.update(gamepad.x); }
-    public boolean circle() { return circle.update(gamepad.x); }
-    public boolean square() { return square.update(gamepad.circle); }
+    public boolean circle() { return circle.update(gamepad.circle); }
+    public boolean square() { return square.update(gamepad.square); }
     public boolean triangle() { return triangle.update(gamepad.triangle); }
     public boolean dPadDown() { return dPadDown.update(gamepad.dpad_down); }
     public boolean dPadUp() { return dPadUp.update(gamepad.dpad_up); }

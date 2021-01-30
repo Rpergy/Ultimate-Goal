@@ -44,23 +44,24 @@ public class Actuation {
     HardwareMap hardwareMap;
     Localizer localizer;
     VoltageSensor voltage;
-    LinearOpMode linearOpMode;
+    LinearOpMode linearOpMode = null;
     RevColorSensorV3 colorsensor;
 
     /**
      * For Autonomous initialization specifically.
      */
     public Actuation(LinearOpMode linearOpMode, Localizer localizer) {
-        this(linearOpMode.hardwareMap, localizer);
+        this(linearOpMode.hardwareMap, localizer, linearOpMode);
         this.linearOpMode = linearOpMode;
     }
 
     /**
      * For TeleOp initialization specifically.
      */
-    public Actuation(HardwareMap hardwareMap, Localizer localizer) {
+    public Actuation(HardwareMap hardwareMap, Localizer localizer, LinearOpMode linearOpMode) {
         this.hardwareMap = hardwareMap;
         this.localizer = localizer;
+        this.linearOpMode = linearOpMode;
 
         voltage = hardwareMap.voltageSensor.iterator().next();
 
@@ -85,12 +86,15 @@ public class Actuation {
 
         if (hardwareMap.servo.contains("wobbleGrab")) {
             wobbleGrab = hardwareMap.servo.get("wobbleGrab");
-            wobbleGrab.setPosition(WOBBLE_GRAB); //TODO: Find "grab" pos
+            if (linearOpMode != null)
+                wobbleClawClose();
+            else
+                wobbleClawOpen();
         }
 
         if (hardwareMap.servo.contains("wobbleArm")) {
             wobbleArm = hardwareMap.servo.get("wobbleArm");
-            wobbleArm.setPosition(WOBBLE_ARM_UP);
+            wobbleArmUp();
         }
 
         if (hardwareMap.colorSensor.contains("colorSensor")) {
@@ -261,25 +265,35 @@ public class Actuation {
 
     public void wobbleArmDown() {
         if (wobbleArm != null)
-            wobbleArm.setPosition(WOBBLE_ARM_UP);
+            wobbleArm.setPosition(WOBBLE_ARM_DOWN);
     }
 
     public void wobbleArmUp() {
         if (wobbleArm != null)
-            wobbleArm.setPosition(WOBBLE_ARM_DOWN);
+            wobbleArm.setPosition(WOBBLE_ARM_UP);
+    }
+
+    public void wobbleArmSlightltyUp() {
+        if(wobbleArm != null)
+            wobbleArm.setPosition(.8);
     }
 
     public void placeWobble() {
-        if(wobbleArm != null  && wobbleGrab != null) {
+        if (wobbleArm != null && wobbleGrab != null) {
             wobbleArmDown();
+            linearOpMode.sleep(750);
             wobbleClawOpen();
+            linearOpMode.sleep(750);
             wobbleArmUp();
         }
     }
 
     public void grabWobble() {
-        if(wobbleArm != null  && wobbleGrab != null) {
+        if (wobbleArm != null && wobbleGrab != null) {
+            wobbleArmDown();
+            linearOpMode.sleep(750);
             wobbleClawClose();
+            linearOpMode.sleep(750);
             wobbleArmUp();
         }
     }
@@ -288,7 +302,16 @@ public class Actuation {
         return wobbleArm.getPosition() == WOBBLE_ARM_UP;
     }
 
+    public boolean isWobbleArmDown() {
+        return wobbleArm.getPosition() == WOBBLE_ARM_DOWN;
+    }
+
     public boolean isWobbleClawOpen() {
         return wobbleGrab.getPosition() == WOBBLE_RELEASE;
     }
+
+    public boolean isWobbleClawClosed() {
+        return wobbleGrab.getPosition() == WOBBLE_GRAB;
+    }
+
 }
