@@ -5,6 +5,7 @@ import android.content.Context;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.Actuation;
@@ -19,8 +20,8 @@ import static org.firstinspires.ftc.teamcode.core.FieldConstants.centerB;
 import static org.firstinspires.ftc.teamcode.core.FieldConstants.centerC;
 import static org.firstinspires.ftc.teamcode.core.FieldConstants.startPose;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous
-public class Autonomous extends LinearOpMode {
+@Autonomous(name = "Autonomous")
+public class AutonomousRemote extends LinearOpMode {
 
     /*
         Routine:
@@ -44,10 +45,10 @@ public class Autonomous extends LinearOpMode {
         drive.setPoseEstimate(startPose);
         actuation = new Actuation(this, drive.getLocalizer());
 
-//        ringDetection = new TensorFlowRingDetection(this);
+        ringDetection = new TensorFlowRingDetection(this);
 
         waitForStart();
-        ringCase = "None"; //ringDetection.res(this); //TODO: Hardcoding for now. Change when camera is mounted
+        ringCase = ringDetection.res(this); //TODO: Hardcoding for now. Change when camera is mounted
         telemetry.addData("Ring case", ringCase);
         telemetry.update();
 
@@ -64,7 +65,7 @@ public class Autonomous extends LinearOpMode {
 
     void park() {
         Pose2d pose = drive.getPoseEstimate();
-        drive.followTrajectory(drive.trajectoryBuilder(pose).lineToConstantHeading(new Vector2d(-8/*SHOOT_LINE*/, pose.getY())).build());
+        drive.followTrajectory(drive.trajectoryBuilder(pose).lineToConstantHeading(new Vector2d(SHOOT_LINE, pose.getY())).build());
     }
 
     /**
@@ -89,7 +90,7 @@ public class Autonomous extends LinearOpMode {
                         .splineToLinearHeading(center, toRadians(-90))
                         .build()
         );
-//        actuation.placeWobble();
+
         actuation.wobbleArmDown();
         sleep(750);
         actuation.wobbleClawOpen();
@@ -105,8 +106,10 @@ public class Autonomous extends LinearOpMode {
         actuation.wobbleClawClose();
         sleep(750);
         actuation.wobbleArmSlightltyUp();
+
+
         drive.followTrajectory(
-                drive.trajectoryBuilder(drive.getPoseEstimate(), toRadians(0))
+                drive.trajectoryBuilder(drive.getPoseEstimate(), toRadians(90))
                         .splineToLinearHeading(centerAgain, toRadians(180)).build());
         actuation.placeWobble();
     }

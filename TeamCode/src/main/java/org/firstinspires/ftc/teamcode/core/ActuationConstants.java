@@ -8,11 +8,11 @@ public class ActuationConstants {
 
     // Wobble Grabber Constants
     //TODO: Measure Wobble Constants.
-    static final double WOBBLE_GRAB = 0.375;
-    static final double WOBBLE_RELEASE = 0.8;
+    static final double WOBBLE_GRAB = 0.95;
+    static final double WOBBLE_RELEASE = 0.45;
 
     static final double WOBBLE_ARM_UP = 0.0;
-    static final double WOBBLE_ARM_DOWN = 0.85;
+    static final double WOBBLE_ARM_DOWN = 0.88;
 
     static final double RESTING_TURNING_POS = 0;
 

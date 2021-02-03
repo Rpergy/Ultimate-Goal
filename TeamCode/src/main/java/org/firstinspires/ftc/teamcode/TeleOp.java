@@ -11,13 +11,12 @@ import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
 /*
     Controls:
     Gamepad1:
-    Movement
-    Shooting
+    -Movement
+    -Shooting
 
     Gamepad2:
-    intake right trigger
-    wobblegoal arm move: dpadUp
-    wobblegoal grab: triangle
+    - intake (Right Trigger)
+    - Wobble grab / place (Triangle)
 
  */
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -45,35 +44,21 @@ public class TeleOp extends OpMode {
     @Override
     public void loop() {
 
+        // Translational movement
         drive.setWeightedDrivePower(
                 new Pose2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
+                        gamepad1.left_stick_y,
+                        gamepad1.left_stick_x,
                         -gamepad1.right_stick_x
                 )
         );
 
+        // Intake functionality
         if (gamepad2.right_trigger > .5) actuation.suck();
         if (gamepad2.left_trigger > .5) actuation.spitOut();
         if (gamepad2.right_trigger < .5 && gamepad2.left_trigger < .5) actuation.stopIntake();
 
-        /*if(gamepad1.triangle) actuation.wobbleClawClose();
-        else actuation.wobbleClawOpen();
-
-        if(gamepad1.square) actuation.wobbleArmUp();
-        else actuation.wobbleArmDown();*/
-
-        /*if(update1.square()) {
-            if(actuation.isWobbleArmUp())
-                actuation.wobbleArmDown();
-            else actuation.wobbleArmUp();
-        }
-        if(update1.triangle()) {
-            if(actuation.isWobbleClawOpen())
-                actuation.wobbleClawClose();
-            else actuation.wobbleClawOpen();
-        }*/
-
+        // Wobble grabber/arm functionality (triangle)
         if (update1.triangle()) {
             if (actuation.isWobbleArmUp()) {
                 ElapsedTime timer = new ElapsedTime();
@@ -106,14 +91,25 @@ public class TeleOp extends OpMode {
         if (update1.triangle())
             actuation.powerShots(drive);*/
 
+        /* Uncomment for localization debugging
         telemetry.addData("x", drive.getPoseEstimate().getX());
         telemetry.addData("y", drive.getPoseEstimate().getY());
-        telemetry.addData("heading", drive.getPoseEstimate().getHeading());
+        telemetry.addData("heading", drive.getPoseEstimate().getHeading());*/
 
         telemetry.update();
         drive.update();
     }
 
+    /**
+     * Between autonomous and teleop, we want to be able to "quicksave" our location at the end of
+     * autonomous and teleop. This is primarily for knowing where we are on the field so we can
+     * shoot automatically without driver guidance. We do this by adding a serialized version of our
+     * last Pose2d instance to UserPreferences (a small scale implementation of storage on Android),
+     * and retrieving it and "unserializing it" manually. //TODO: Fix this
+     *
+     * @param s toString() of last known Pose2d instance
+     * @return Pose2d instance
+     */
     static Pose2d unserialize(String s) {
         String[] stringValues = s.substring(1, s.length() - 1).split(",");
         double x = Double.parseDouble(stringValues[0]);

@@ -23,11 +23,15 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
+    public static Pose2d leftDeadWheelPose = new Pose2d(-2.25, LATERAL_DISTANCE / 2, 0);
+    public static Pose2d rightDeadWheelPose = new Pose2d(-3.25, -LATERAL_DISTANCE / 2, 0);
+    public static Pose2d horizontalDeadWheelPose = new Pose2d(2.0, LATERAL_DISTANCE / 2, Math.toRadians(90));
+
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
-                new Pose2d(-2.25, LATERAL_DISTANCE / 2, 0), // left
-                new Pose2d(-3.25, -LATERAL_DISTANCE / 2, 0), // right
-                new Pose2d(2.0, LATERAL_DISTANCE / 2, Math.toRadians(90)) // front
+                leftDeadWheelPose,
+                rightDeadWheelPose,
+                horizontalDeadWheelPose
         ));
 
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontLeft"));
