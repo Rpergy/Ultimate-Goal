@@ -18,6 +18,7 @@ public class FieldConstants {
     public static Vector2d rightPowerShot = new Vector2d(MAX_EDGE, -13.5);
 
     // For path coordinates
+    public static Vector2d ringPos = new Vector2d(-24, -36);
     public static Pose2d centerA = new Pose2d(12,-60, toRadians(90));
     public static Pose2d centerB = new Pose2d(36,-32, toRadians(90));
     public static Pose2d centerC = new Pose2d(70, -65, toRadians(90)); // theoretical: x = 60, y = -60

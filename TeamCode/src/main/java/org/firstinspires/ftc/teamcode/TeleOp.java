@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.core.Actuation;
 import org.firstinspires.ftc.teamcode.core.StandardMechanumDrive;
 import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
 
+import static java.lang.Double.parseDouble;
+
 /*
     Controls:
     Gamepad1:
@@ -23,8 +25,7 @@ import org.firstinspires.ftc.teamcode.core.gamepad.GamepadEventPS;
 public class TeleOp extends OpMode {
     StandardMechanumDrive drive;
     Actuation actuation;
-    GamepadEventPS update1;
-    GamepadEventPS update2;
+    GamepadEventPS update1, update2;
 
     @Override
     public void init() {
@@ -58,8 +59,20 @@ public class TeleOp extends OpMode {
         if (gamepad2.left_trigger > .5) actuation.spitOut();
         if (gamepad2.right_trigger < .5 && gamepad2.left_trigger < .5) actuation.stopIntake();
 
-        // Wobble grabber/arm functionality (triangle)
-        if (update1.triangle()) {
+        // Wobble grabber/arm functionality (triangle, square)
+        if(update2.triangle()) {
+            if(actuation.isWobbleArmUp())
+                actuation.wobbleArmDown();
+            else actuation.wobbleArmUp();
+        }
+
+        if(update2.square()) {
+            if(actuation.isWobbleClawClosed())
+                actuation.wobbleClawOpen();
+            else actuation.wobbleClawOpen();
+        }
+
+        /*if (update1.triangle()) {
             if (actuation.isWobbleArmUp()) {
                 ElapsedTime timer = new ElapsedTime();
                 actuation.wobbleArmDown();
@@ -79,7 +92,7 @@ public class TeleOp extends OpMode {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
 
         if (actuation.hasRings()) {
             actuation.preheatShooter();
@@ -111,10 +124,10 @@ public class TeleOp extends OpMode {
      * @return Pose2d instance
      */
     static Pose2d unserialize(String s) {
-        String[] stringValues = s.substring(1, s.length() - 1).split(",");
-        double x = Double.parseDouble(stringValues[0]);
-        double y = Double.parseDouble(stringValues[1]);
-        double heading = Double.parseDouble(stringValues[2]);
+        String[] components = s.substring(1, s.length() - 1).split(",");
+        double x = parseDouble(components[0].trim());
+        double y = parseDouble(components[1].trim());
+        double heading = parseDouble(components[2].trim());
         return new Pose2d(x, y, heading);
     }
 }

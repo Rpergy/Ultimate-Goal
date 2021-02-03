@@ -73,7 +73,7 @@ public class TensorFlowRingDetection {
      */
     private void initTfod(HardwareMap hardwareMap) {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.5f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
@@ -89,21 +89,30 @@ public class TensorFlowRingDetection {
     }
 
     public String res(LinearOpMode linearOpMode) {
-        if(tfod != null) {
-            List<Recognition> updatedRecognitions = tfod.getRecognitions();
-            if(updatedRecognitions != null) {
-                linearOpMode.telemetry.addData("# Object Detected", updatedRecognitions.size());
-                if(updatedRecognitions.isEmpty())
-                    return "None";
-                return updatedRecognitions.get(0).getLabel();
-            }
-            else {
-                linearOpMode.telemetry.addData("TFOD", "recognitions list null!!!");
-            }
+        if (tfod != null) {
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                linearOpMode.sleep(1000);
+                while (linearOpMode.opModeIsActive()) {
+                    updatedRecognitions = tfod.getUpdatedRecognitions();
+                    if (updatedRecognitions != null) {
+                        linearOpMode.telemetry.addData("# Object Detected", updatedRecognitions.size());
 
-
-            tfod.shutdown();
+                        linearOpMode.telemetry.update();
+                        if (!updatedRecognitions.isEmpty())
+                            return updatedRecognitions.get(0).getLabel();
+                        else return "None";
+                    }
+                }
+            }
+        } else {
+            linearOpMode.telemetry.addData("TFOD", "recognitions list null!!!");
+            linearOpMode.telemetry.update();
         }
+
+
+        tfod.shutdown();
+
         linearOpMode.telemetry.update();
         return "Issue";
     }

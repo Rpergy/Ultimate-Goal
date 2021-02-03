@@ -33,9 +33,9 @@ public class AutonomousRemote extends LinearOpMode {
         5. Park.
      */
 
-    private TensorFlowRingDetection ringDetection;
-    private String ringCase = "";
-    private StandardMechanumDrive drive;
+    TensorFlowRingDetection ringDetection;
+    String ringCase = "";
+    StandardMechanumDrive drive;
     Actuation actuation;
 
     @SuppressWarnings("RedundantThrows")
@@ -44,10 +44,10 @@ public class AutonomousRemote extends LinearOpMode {
         drive = new StandardMechanumDrive(hardwareMap);
         drive.setPoseEstimate(startPose);
         actuation = new Actuation(this, drive.getLocalizer());
-
         ringDetection = new TensorFlowRingDetection(this);
 
         waitForStart();
+
         ringCase = ringDetection.res(this); //TODO: Hardcoding for now. Change when camera is mounted
         telemetry.addData("Ring case", ringCase);
         telemetry.update();
@@ -115,7 +115,6 @@ public class AutonomousRemote extends LinearOpMode {
     }
 
     private void performCase(String ringCase) {
-        Vector2d ringPos = new Vector2d(-24, -36);
         Trajectory startToRings = drive.trajectoryBuilder(startPose).splineToConstantHeading(ringPos, 0).build();
         switch (ringCase) {
             case "None": // Zero rings, case "A"
