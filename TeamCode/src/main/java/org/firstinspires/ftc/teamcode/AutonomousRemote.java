@@ -76,13 +76,15 @@ public class AutonomousRemote extends LinearOpMode {
      * 5. Go back to same case square
      * 6. Drop off 2nd wobble
      */
-    void wobbleRoutine(Pose2d center) {
+    void wobbleRoutine(Pose2d center, Pose2d back) {
         // centerPose is a pose of the square's center (A/B/C), backPose is the position the robot will be in to collect the second wobble goal
         Pose2d centerAgain;
-        if(center != centerA)
+        /*if(center != centerA)
             centerAgain = new Pose2d(center.getX(), center.getY(), toRadians(180));
         else
-            centerAgain = centerA;
+            centerAgain = centerA;*/
+        centerAgain = center;
+        centerAgain = new Pose2d(centerAgain.getX() - 3, centerAgain.getY(), centerAgain.getHeading());
 
         // Go to square for 1st time, drop off preloaded wobble
         drive.followTrajectory(
@@ -94,15 +96,19 @@ public class AutonomousRemote extends LinearOpMode {
         actuation.wobbleArmDown();
         sleep(750);
         actuation.wobbleClawOpen();
+        sleep(750);
+        actuation.wobbleArmUp();
 
         // Go back to start area to get 2nd wobble, go back to same square
         drive.followTrajectory(
                 drive.trajectoryBuilder(drive.getPoseEstimate(), toRadians(90))
-                        .splineToLinearHeading(backPose, toRadians(0))
+                        .splineToLinearHeading(back, toRadians(0))
                         .build()
         );
 
         // Collect 2nd wobble (right side), go back to drop off second wobble and place it
+        actuation.wobbleArmDown();
+        sleep(750);
         actuation.wobbleClawClose();
         sleep(750);
         actuation.wobbleArmSlightltyUp();
@@ -118,7 +124,7 @@ public class AutonomousRemote extends LinearOpMode {
         Trajectory startToRings = drive.trajectoryBuilder(startPose).splineToConstantHeading(ringPos, 0).build();
         switch (ringCase) {
             case "None": // Zero rings, case "A"
-                wobbleRoutine(centerA);
+                wobbleRoutine(centerA, backPoseA);
                 break;
 
             case TensorFlowRingDetection.LABEL_SECOND_ELEMENT: // One ring, case "B", "Single"
@@ -126,7 +132,7 @@ public class AutonomousRemote extends LinearOpMode {
                 drive.followTrajectory(startToRings);
                 actuation.stopIntake();
                 actuation.shoot(drive); //TODO: Account for loading rings into shooter for case B, C
-                wobbleRoutine(centerB);
+                wobbleRoutine(centerB, backPoseB);
                 break;
 
             case TensorFlowRingDetection.LABEL_FIRST_ELEMENT: // 4 rings, case "C", "Quad"
@@ -138,7 +144,8 @@ public class AutonomousRemote extends LinearOpMode {
                 actuation.shoot(drive);
                 actuation.shoot(drive);
 
-                wobbleRoutine(centerC);
+//                wobbleRoutine(centerC, backPoseC);
+//                drive.followTrajectory(drive.trajectoryBuilder());
                 break;
         }
     }

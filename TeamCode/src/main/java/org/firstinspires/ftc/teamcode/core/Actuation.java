@@ -275,7 +275,7 @@ public class Actuation {
 
     public void wobbleArmSlightltyUp() {
         if(wobbleArm != null)
-            wobbleArm.setPosition(.8);
+            wobbleArm.setPosition(.6);
     }
 
     public void placeWobble() {
