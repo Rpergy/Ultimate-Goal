@@ -23,8 +23,8 @@ public class FieldConstants {
     public static Pose2d centerB = new Pose2d(46,-23, toRadians(90));
     public static Pose2d centerC = new Pose2d(70, -65, toRadians(90)); // theoretical: x = 60, y = -60
 
-    public static Pose2d backPoseA = new Pose2d(-49,-38, toRadians(0));
-    public static Pose2d backPoseB = new Pose2d(-49, -50, toRadians(0)); //theoretical: x = -31, y = -48
+    public static Pose2d backPoseA = new Pose2d(-49.25,-38, toRadians(0));
+    public static Pose2d backPoseB = new Pose2d(-47.5, -48, toRadians(0)); //theoretical: x = -31, y = -48
     public static Pose2d backPoseC = new Pose2d(-52,-26, toRadians(0));
 
     public static Pose2d startPose = new Pose2d(-63, -33);

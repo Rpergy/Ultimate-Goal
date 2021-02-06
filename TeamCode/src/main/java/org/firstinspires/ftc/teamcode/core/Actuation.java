@@ -78,12 +78,6 @@ public class Actuation {
             shoot.setVelocityPIDFCoefficients(1, 1, 0, 1);
         }
 
-        /*if (hardwareMap.servo.contains("shootTurn")) {
-            turn = hardwareMap.servo.get("shootTurn");
-            turn.setPosition(RESTING_TURNING_POS);
-            turn.scaleRange(0, 300);
-        }*/
-
         if (hardwareMap.servo.contains("wobbleGrab")) {
             wobbleGrab = hardwareMap.servo.get("wobbleGrab");
             if (linearOpMode != null)

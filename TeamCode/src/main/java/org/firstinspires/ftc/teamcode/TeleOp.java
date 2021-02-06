@@ -26,6 +26,7 @@ public class TeleOp extends OpMode {
     StandardMechanumDrive drive;
     Actuation actuation;
     GamepadEventPS update1, update2;
+    boolean slowMode = false;
 
     @Override
     public void init() {
@@ -46,13 +47,27 @@ public class TeleOp extends OpMode {
     public void loop() {
 
         // Translational movement
-        drive.setWeightedDrivePower(
-                new Pose2d(
-                        gamepad1.left_stick_y,
-                        gamepad1.left_stick_x,
-                        -gamepad1.right_stick_x
-                )
-        );
+        if(update1.leftStickButton()) {
+            slowMode = !slowMode;
+            if(slowMode) {
+                drive.setWeightedDrivePower(
+                        new Pose2d(
+                                powerScale(gamepad1.left_stick_y),
+                                powerScale(gamepad1.left_stick_x),
+                                -powerScale(gamepad1.right_stick_x)
+                        )
+                );
+            }
+            else {
+                drive.setWeightedDrivePower(
+                        new Pose2d(
+                                gamepad1.left_stick_y,
+                                gamepad1.left_stick_x,
+                                -gamepad1.right_stick_x
+                        )
+                );
+            }
+        }
 
         // Intake functionality
         if (gamepad2.right_trigger > .5) actuation.suck();
@@ -60,15 +75,15 @@ public class TeleOp extends OpMode {
         if (gamepad2.right_trigger < .5 && gamepad2.left_trigger < .5) actuation.stopIntake();
 
         // Wobble grabber/arm functionality (triangle, square)
-        if(update2.triangle()) {
+        if(update1.rightBumper()) {
             if(actuation.isWobbleArmUp())
                 actuation.wobbleArmDown();
             else actuation.wobbleArmUp();
         }
 
-        if(update2.square()) {
-            if(actuation.isWobbleClawClosed())
-                actuation.wobbleClawOpen();
+        if(update1.leftBumper()) {
+            if(actuation.isWobbleClawOpen())
+                actuation.wobbleClawClose();
             else actuation.wobbleClawOpen();
         }
 
@@ -129,5 +144,19 @@ public class TeleOp extends OpMode {
         double y = parseDouble(components[1].trim());
         double heading = parseDouble(components[2].trim());
         return new Pose2d(x, y, heading);
+    }
+
+    static double powerScale(double power){
+        return powerScale(power, 1);
+    }
+
+    static double powerScale(double power, double scale){
+        if (power<=1) {
+            if (power < 0)
+                return -(scale * power * power);
+            else
+                return scale * power * power;
+        }
+        return 1;
     }
 }

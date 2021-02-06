@@ -14,7 +14,7 @@ import static java.lang.Math.*;
 
 @TeleOp(name = "Kobe Test Part 2")
 public class KobeTest2 extends OpMode {
-    DcMotorEx shooter;
+    DcMotorEx shooter, shooter2;
     final double wheelRadius = 0.0508; // in meters
     double angularVelocity = 0; // rad/s
     double linearVelocity = 0; // m/s
@@ -27,6 +27,7 @@ public class KobeTest2 extends OpMode {
     @Override
     public void init() {
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
+//        shooter2 = hardwareMap.get(DcMotorEx.class, "shooter2");
         update = new GamepadEventPS(gamepad1);
         shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -45,6 +46,7 @@ public class KobeTest2 extends OpMode {
 
 
         shooter.setVelocity(angularVelocity, AngleUnit.RADIANS);
+//        shooter2.setVelocity(angularVelocity, AngleUnit.RADIANS);
         telemetry.addLine("Use dPad Up/Down to change motor speed");
         telemetry.addData("Angular velocity (rad)", angularVelocity);
 //        telemetry.addData("Angular Velocity (deg)", toDegrees(angularVelocity));

@@ -84,17 +84,20 @@ public class AutonomousRemote extends LinearOpMode {
         else
             centerAgain = centerA;*/
         centerAgain = center;
+
         centerAgain = new Pose2d(centerAgain.getX() - 3, centerAgain.getY(), centerAgain.getHeading());
+
+        if(center.epsilonEquals(centerC))
+            SHOOT_LINE = 8;
 
         // Go to square for 1st time, drop off preloaded wobble
         drive.followTrajectory(
                 drive.trajectoryBuilder(drive.getPoseEstimate())
                         .splineToLinearHeading(center, toRadians(-90))
+                        .addTemporalMarker(1, () -> actuation.wobbleArmDown())
                         .build()
         );
 
-        actuation.wobbleArmDown();
-        sleep(750);
         actuation.wobbleClawOpen();
         sleep(750);
         actuation.wobbleArmUp();
@@ -102,13 +105,13 @@ public class AutonomousRemote extends LinearOpMode {
         // Go back to start area to get 2nd wobble, go back to same square
         drive.followTrajectory(
                 drive.trajectoryBuilder(drive.getPoseEstimate(), toRadians(90))
-                        .splineToLinearHeading(back, toRadians(0))
+                        .splineToLinearHeading(back, toRadians(180))
                         .build()
         );
 
         // Collect 2nd wobble (right side), go back to drop off second wobble and place it
         actuation.wobbleArmDown();
-        sleep(750);
+        sleep(1500);
         actuation.wobbleClawClose();
         sleep(750);
         actuation.wobbleArmSlightltyUp();
@@ -144,8 +147,7 @@ public class AutonomousRemote extends LinearOpMode {
                 actuation.shoot(drive);
                 actuation.shoot(drive);
 
-//                wobbleRoutine(centerC, backPoseC);
-//                drive.followTrajectory(drive.trajectoryBuilder());
+                wobbleRoutine(centerC, backPoseC);
                 break;
         }
     }
