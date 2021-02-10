@@ -1,3 +1,4 @@
+//RP Import all necessary packages
 package org.firstinspires.ftc.teamcode.core;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -37,7 +38,7 @@ import static org.firstinspires.ftc.teamcode.core.FieldConstants.*;
 import static org.firstinspires.ftc.teamcode.core.FieldConstants.redGoal;
 
 public class Actuation {
-
+    //RP specifying the components
     DcMotorEx shoot;
     DcMotor intake;
     Servo turn, wobbleGrab, wobbleArm, feeder;
@@ -64,7 +65,8 @@ public class Actuation {
         this.linearOpMode = linearOpMode;
 
         voltage = hardwareMap.voltageSensor.iterator().next();
-
+        
+        //RP setting all the modes and values of the components (grabber, shooter, etc.)
         if (hardwareMap.dcMotor.contains("intake")) {
             intake = hardwareMap.dcMotor.get("intake");
             intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -281,7 +283,7 @@ public class Actuation {
             wobbleArmUp();
         }
     }
-
+    
     public void grabWobble() {
         if (wobbleArm != null && wobbleGrab != null) {
             wobbleArmDown();
@@ -291,7 +293,8 @@ public class Actuation {
             wobbleArmUp();
         }
     }
-
+    
+    //RP Returns positions of wobble arm
     public boolean isWobbleArmUp() {
         return wobbleArm.getPosition() == WOBBLE_ARM_UP;
     }
